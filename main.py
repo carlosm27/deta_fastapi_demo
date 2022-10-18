@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from deta import Deta
 from io import BytesIO
 import os
+import logging
 
 
 app = FastAPI()
@@ -39,14 +40,12 @@ def upload_image(file: UploadFile = File(...)):
     image = file.file
 
     try:
-        img = webp_to_png(imagef)
-    
+        img = webp_to_png(image)
         png_name = webp_name.replace(".webp", ".png")
-        res = drive.put(png_name, img)
-        return JSONResponse(status_code =status.HTTP_201_CREATED, content={"message": f"Image: '{res}' successfully uploaded."})
-        
-    except Exception:
-        return JSONResponse(status_code=500, content={"message": "There was an error uploading the file"})
+        res = drive.put(png_name, img)    
+        return JSONResponse(status_code =status.HTTP_201_CREATED, content={"message": f"Image: '{res}' successfully uploaded."})  
+    except:
+        return JSONResponse(status_code=500, content="There was an error converting or uploading the file")
                 
     
 
@@ -69,9 +68,9 @@ def webp_to_png(image):
         img_io = BytesIO()
         img.save(img_io , 'PNG')
         img_io.seek(0)
-    except Exception:
-        return "Unable to open the image file." 
-
+    except OSError:
+        print("Cannot convert") 
+         
     finally:
         img.close()
     return img_io
