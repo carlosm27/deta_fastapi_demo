@@ -39,17 +39,14 @@ def upload_image(file: UploadFile = File(...)):
     image = file.file
 
     try:
-        img = webp_to_png(image)
-    except Exception:
-        return {"message": "There was a problem converting the file."}  
-
-    try:
+        img = webp_to_png(imagef)
+    
         png_name = webp_name.replace(".webp", ".png")
         res = drive.put(png_name, img)
         return JSONResponse(status_code =status.HTTP_201_CREATED, content={"message": f"Image: '{res}' successfully uploaded."})
         
     except Exception:
-        return {"message": "There was an error uploading the file"}
+        return JSONResponse(status_code=500, content={"message": "There was an error uploading the file"})
                 
     
 
