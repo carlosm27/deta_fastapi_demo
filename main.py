@@ -34,7 +34,7 @@ def render():
 def upload_image(file: UploadFile = File(...)):
     
 
-    if not file.filename.endswith(".webp") or file:
+    if not file.filename.endswith(".webp") or not file:
         raise HTTPException(status_code=400 , detail = "Select a '.webp' file")
 
     webp_name = file.filename
@@ -44,7 +44,7 @@ def upload_image(file: UploadFile = File(...)):
 
         img = webp_to_png(image)
         png_name = webp_name.replace(".webp", ".png")
-        res = drive.put(png_name, img)    
+        res = drive.put(png_name, img)   
         return JSONResponse(status_code =status.HTTP_201_CREATED, content={"message": f"Image: '{res}' successfully uploaded."})  
     except:
         return JSONResponse(status_code=500, content="There was an error converting or uploading the file")
