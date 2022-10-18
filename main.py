@@ -32,14 +32,16 @@ def render():
 
 @app.post("/upload")
 def upload_image(file: UploadFile = File(...)):
+    
 
-    if not file.filename.endswith(".webp"):
-        raise HTTPException(status_code=400 , details = "Not a '.webp' file")
+    if not file.filename.endswith(".webp") or file:
+        raise HTTPException(status_code=400 , detail = "Select a '.webp' file")
 
     webp_name = file.filename
     image = file.file
 
     try:
+
         img = webp_to_png(image)
         png_name = webp_name.replace(".webp", ".png")
         res = drive.put(png_name, img)    
